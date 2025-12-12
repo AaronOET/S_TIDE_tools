@@ -6,7 +6,7 @@
 import pandas as pd
 
 # Read the CSV file
-df = pd.read_csv('2015_1486_高雄潮位站_tide.csv', skiprows=20)
+df = pd.read_csv('2016_1486_高雄潮位站_tide.csv', skiprows=20)
 
 # Extract the relevant columns: yyyymmddhh and :00 (hourly data)
 tide_data = df[['yyyymmddhh', ':00']].copy()
@@ -47,9 +47,11 @@ tide_data['datetime'] = pd.to_datetime(tide_data['datetime'])
 # Sort by datetime
 tide_data = tide_data.sort_values('datetime')
 
-# Create a complete hourly time series from the first to last valid timestamp
-start_time = tide_data['datetime'].min()
+# Create a complete hourly time series starting from Jan-01 of the year to last valid timestamp
+first_timestamp = tide_data['datetime'].min()
 end_time = tide_data['datetime'].max()
+# Set start_time to January 1st 00:00 of the same year as the first timestamp
+start_time = pd.Timestamp(year=first_timestamp.year, month=1, day=1, hour=0)
 complete_time_series = pd.date_range(start=start_time, end=end_time, freq='h')
 
 # Create a dataframe with the complete time series
